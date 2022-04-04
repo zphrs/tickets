@@ -116,6 +116,8 @@
     display: flex;
     position: relative;
     height: 3em;
+    border-top-left-radius: inherit;
+    border-top-right-radius: inherit;
   }
   .choose-dash {
     a {
@@ -135,6 +137,12 @@
       &:focus {
         background-color: var(--thick-glass-color);
       }
+      &:first-child {
+        border-top-left-radius: inherit;
+      }
+      &:last-child {
+        border-top-right-radius: inherit;
+      }
       border-bottom: 1px solid var(--thick-glass-color);
     }
     --underline-start: 0;
@@ -143,13 +151,13 @@
   }
   .choose-dash > a.active {
     transition-duration: 0s;
-    color: var(--accent-color);
+    color: var(--text-color);
   }
 
   .choose-dash::after {
     content: "";
     display: block;
-    height: 0.2rem;
+    height: 2px;
     background-color: var(--accent-color);
     left: 0;
     width: 100%;

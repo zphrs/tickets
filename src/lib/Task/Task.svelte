@@ -1,59 +1,158 @@
 <script lang="ts">
   import type TaskObject from "./Task"
   import Button from "../Button.svelte"
+  import { fade } from "svelte/transition"
+  import { quadOut } from "svelte/easing"
+  import { createEventDispatcher } from "svelte"
   export let task: TaskObject
+  export let inCompletedList = false
+  export let firstInCompletedList = false
+
+  export let lastUncompletedTask = false
+
+  const dispatch = createEventDispatcher()
+
   let buttonActive = true
   let buttonError = ""
-  function complete(e) {
+
+  function complete(e: MouseEvent) {
     const target = e.target as HTMLElement
     const input = target.parentElement.querySelector(
       "input"
     ) as HTMLInputElement
     if (input.value) {
       task.complete(input.value)
+      input.value = ""
+      buttonError = input.value
+      const lastTask = task
+      window.setTimeout(() => {
+        dispatch("taskcomplete", {
+          task: lastTask,
+        })
+      }, 300)
+      task = task
     } else {
       buttonError = "Please enter a completion message"
+      input.focus()
     }
-    input.value = ""
-    task = task
+  }
+
+  function spin(node: HTMLElement, { delay = 0, duration = 500 }) {
+    if (inCompletedList && !firstInCompletedList) {
+      return {
+        delay,
+        duration,
+        easing: quadOut,
+        css: (t: number) => `transform: translateY(${(1 - t) * -100}%)`,
+      }
+    }
+    if (firstInCompletedList) {
+      const from = document.querySelector(".tippytop")
+      if (!from) {
+        return {
+          delay: 0,
+          duration,
+          easing: quadOut,
+          css: (t: number) => `transform: translateY(${(1 - t) * -100}%)`,
+        }
+      }
+      const to = node.parentElement
+      // get bounding box of from
+      const fromRect = from.getBoundingClientRect()
+      // get bounding box of to
+      const toRect = to.getBoundingClientRect()
+      const yDiff = fromRect.y - toRect.y
+      console.log(fromRect, toRect, yDiff)
+      return {
+        delay: 0,
+        duration: 500,
+        css: (t: number) => `transform: translateY(${(1 - t) * yDiff}px)`,
+        easing: quadOut,
+      }
+    }
+    return {
+      delay: 0,
+      duration: 500,
+      css: (t: number) => `
+        transform: rotate(${(1 - t) * 5}deg);
+        background-color: rgba(var(--accent), ${0.1 + t * 0.2});
+        opacity: ${t};
+      `,
+      easing: quadOut,
+    }
+  }
+
+  function fadein(node, { delay = 0, duration = 500 }) {
+    if (inCompletedList) {
+      return {
+        delay: 0,
+        duration: 0,
+      }
+    }
+    return {
+      delay: 0,
+      duration: 1000,
+      css: t => `
+        opacity: ${t};
+      `,
+      easing: quadOut,
+    }
   }
 </script>
 
-<div>
-  <h1>{task.client}</h1>
-  <p>{task.description}</p>
-  {#if !task.completed}
-    <input
-      placeholder="completion message"
-      on:input={() => {
-        buttonError = ""
-      }}
-    />
+<div class="parent noborder">
+  <div class="top" in:spin>
+    <div class="noborder" in:fadein class:tippytop={!inCompletedList}>
+      <h1>For {task.client}</h1>
+      <p>{@html task.description}</p>
+      {#if !task.completed}
+        <input
+          placeholder="completion message"
+          on:input={() => {
+            buttonError = ""
+          }}
+        />
+      {:else if !inCompletedList}
+        <span class="input-height" />
+      {/if}
+      <Button
+        on:click
+        on:click={complete}
+        active={buttonActive}
+        error={buttonError || task.completionNote}
+      >
+        Complete
+      </Button>
+    </div>
+  </div>
+  {#if !inCompletedList && !lastUncompletedTask}
+    <div class="alt" in:fade />
   {/if}
-  <Button
-    on:click
-    on:click={complete}
-    active={buttonActive}
-    error={buttonError || task.completionNote}>Complete</Button
-  >
 </div>
 
 <style lang="scss">
-  input {
-    background-color: var(--glass-color);
+  .parent {
+    position: relative;
     border: none;
-    border-bottom: 2px solid var(--thick-glass-color);
-    font: inherit;
-    color: var(--accent-color);
-    outline: none;
-    padding: 0.5rem 1rem;
-    margin-bottom: 0.5rem;
-    &:focus {
-      border-color: var(--accent-color);
-    }
-    // style placeholder
-    &::-webkit-input-placeholder {
-      color: var(--thick-glass-color);
-    }
+    margin: 0;
+    padding: 0;
+  }
+  .alt {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform: rotate(5deg) scale(1);
+    background-color: none;
+    opacity: 0.5;
+  }
+  .top {
+    background-color: var(--thick-glass-color);
+    z-index: 2;
+  }
+
+  .input-height {
+    height: 0.7rem;
   }
 </style>
