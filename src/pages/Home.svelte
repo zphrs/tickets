@@ -15,7 +15,7 @@
 
     <table>
       <tr>
-        <th><a href="/#/client">client</a> view</th>
+        <th><a href="#/client">client</a> view</th>
         <th> <a href="#/tech">technician</a> view</th>
       </tr>
       <tr>

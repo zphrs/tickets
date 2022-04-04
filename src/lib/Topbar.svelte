@@ -114,10 +114,7 @@
 <style scoped lang="scss">
   .choose-dash {
     display: flex;
-    position: relative;
     height: 3em;
-    border-top-left-radius: inherit;
-    border-top-right-radius: inherit;
   }
   .choose-dash {
     a {
@@ -138,16 +135,15 @@
         background-color: var(--thick-glass-color);
       }
       &:first-child {
-        border-top-left-radius: inherit;
+        border-top-left-radius: 0.5rem;
       }
       &:last-child {
-        border-top-right-radius: inherit;
+        border-top-right-radius: 0.5rem;
       }
       border-bottom: 1px solid var(--thick-glass-color);
     }
     --underline-start: 0;
     --underline-end: 0;
-    background-color: var(--glass-color);
   }
   .choose-dash > a.active {
     transition-duration: 0s;

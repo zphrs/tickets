@@ -59,10 +59,10 @@
     <textarea placeholder="task description" bind:this={descriptionElement} />
   </p>
   <select data-value="-1" on:change={setDataValue} bind:this={priorityElement}>
-    <option value="-1" default>select priority</option>
-    <option value="3">Low</option>
-    <option value="2">Medium</option>
-    <option value="1">High</option>
+    <option disabled value="-1" selected>select priority</option>
+    <option value="3">!</option>
+    <option value="2">!!</option>
+    <option value="1">!!!</option>
   </select>
   <Button on:click on:click={submit} active={buttonActive} error={buttonError}
     >Submit</Button
@@ -79,5 +79,6 @@
     flex: 1;
     width: 100%;
     margin-left: 0.75rem;
+    max-width: 20rem;
   }
 </style>

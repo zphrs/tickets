@@ -103,7 +103,10 @@
 <div class="parent noborder">
   <div class="top" in:spin>
     <div class="noborder" in:fadein class:tippytop={!inCompletedList}>
-      <h1>For {task.client}</h1>
+      <h1>
+        For {task.client}
+        <span class="priority">{"!".repeat(4 - task.priority)}</span>
+      </h1>
       <p>{@html task.description}</p>
       {#if !task.completed}
         <input
@@ -136,6 +139,22 @@
     border: none;
     margin: 0;
     padding: 0;
+  }
+
+  .priority {
+    padding: none;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+    position: absolute;
+    box-sizing: unset;
+    top: -0.25em;
+    right: -0.25em;
+    border: 2px solid rgba(var(--accent), 0.7);
+    font-size: 1.25rem;
+    border-radius: 0.5rem;
+    border-bottom-left-radius: 0;
+    // background-color: rgba(var(--background), 0.5);
+    background-color: var(--thick-glass-color);
   }
   .alt {
     position: absolute;

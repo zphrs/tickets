@@ -13,6 +13,16 @@
     completedTasksArray = [...completedTasks]
   }
   completedTasks = completedTasks
+
+  function appear(target, { delay = 2000, duration = 1000 }) {
+    return {
+      delay: 10000,
+      duration,
+      css: t => `
+        opacity: ${t},
+      `,
+    }
+  }
 </script>
 
 <div class="noborder" in:fade>
@@ -31,11 +41,13 @@
       />
     {/key}
   {:else}
-    <h2>You're all caught up!</h2>
-    <p>
-      Tickets will display here once added. You can add some more tickets by
-      going to <a href="#/client">the client page</a>.
-    </p>
+    <div in:appear>
+      <h2>You're all caught up!</h2>
+      <p>
+        Tickets will display here once added. You can add some more tickets by
+        going to <a href="#/client">the client page</a>.
+      </p>
+    </div>
   {/if}
   {#if completedTasksArray.length > 0}
     <br />
@@ -60,8 +72,10 @@
 <style>
   summary {
     z-index: 5;
-    background: rgba(var(--background));
     font-weight: bold;
     font-size: 1.5em;
+  }
+  p {
+    white-space: normal;
   }
 </style>

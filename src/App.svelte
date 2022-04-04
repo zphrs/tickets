@@ -111,27 +111,29 @@
   ]}
 />
 <main>
-  {#if urlHash === "" || urlHash === "#/"}
-    <Home />
-  {:else if urlHash === "#/client"}
-    <Client
-      on:submit={e => {
-        tickets.add(e.detail.task)
-        tickets = tickets
-      }}
-    />
-  {:else if urlHash === "#/tech"}
-    <Tech
-      topTask={tickets.peek()}
-      on:taskcomplete={oncomplete}
-      lastUncompletedTask={tickets.size() < 2}
-      completedTasks={completed}
-    />
-  {:else if urlHash === "#/settings"}
-    <Settings />
-  {:else}
-    <h1>404 - try one of the links above</h1>
-  {/if}
+  <span class="glass">
+    {#if urlHash === "" || urlHash === "#/"}
+      <Home />
+    {:else if urlHash === "#/client"}
+      <Client
+        on:submit={e => {
+          tickets.add(e.detail.task)
+          tickets = tickets
+        }}
+      />
+    {:else if urlHash === "#/tech"}
+      <Tech
+        topTask={tickets.peek()}
+        on:taskcomplete={oncomplete}
+        lastUncompletedTask={tickets.size() < 2}
+        completedTasks={completed}
+      />
+    {:else if urlHash === "#/settings"}
+      <Settings />
+    {:else}
+      <h1>404 - try one of the links above</h1>
+    {/if}
+  </span>
 </main>
 
 <style lang="scss">
@@ -144,6 +146,14 @@
     text-align: center;
     padding: 1em;
     margin: 0 auto;
+    background-color: var(--background-color);
+    border-radius: 0.5rem;
+    span {
+      background-color: var(--thick-glass-color);
+      height: fit-content;
+      display: block;
+      border-radius: 0.5rem;
+    }
   }
 
   :global {
@@ -169,7 +179,7 @@
     body {
       margin: 0;
       margin-top: 7vh;
-      background-color: var(--background-color);
+      background-color: rgba(var(--background), 1);
       border-radius: 0.5rem;
       max-width: 600px;
       width: 100%;
@@ -177,18 +187,32 @@
       flex-direction: column;
       align-content: stretch;
     }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background-color: rgba(var(--background), 0.5);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border-top-left-radius: 0.5rem;
+      border-top-right-radius: 0.5rem;
+    }
     @media screen and (max-width: 600px) {
       body {
         margin: 0;
         border-radius: 0;
         height: 100%;
+        touch-action: pan-x pan-y;
+        position: relative;
       }
       html {
         padding: 0;
         box-sizing: border-box;
       }
-      main {
-        background: var(--background-color);
+
+      nav {
+        flex-shrink: 0;
       }
     }
 
@@ -197,7 +221,7 @@
       flex-direction: column;
       align-items: center;
       --text: 0, 0, 0;
-      --background: 200, 200, 255;
+      --background: 200, 200, 210;
       --accent: 58, 62, 187;
       @media (prefers-color-scheme: dark) {
         --text: 255, 255, 255;
@@ -212,9 +236,6 @@
       background: var(--accent-color);
       color: var(--text-color);
       height: 100%;
-    }
-    body {
-      touch-action: pan-x pan-y;
     }
     h1,
     h2,
@@ -267,7 +288,7 @@
     select {
       appearance: none;
     }
-    select[data-value="-1"] {
+    select:invalid {
       color: rgba(var(--accent), 0.5);
     }
     textarea {
