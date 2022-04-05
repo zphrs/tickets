@@ -1,0 +1,17 @@
+{
+  "name": "Tickets",
+  "short_name": "Tickets",
+  "theme_color": "#ffffff",
+  "background_color": "#000000",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "/tickets/",
+  "start_url": "/tickets/",
+  "icons": [
+    {
+      "src": "./svelte.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
