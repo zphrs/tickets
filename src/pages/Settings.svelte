@@ -6,7 +6,7 @@
 
   let task = new TaskObject(
     "Yourself",
-    "You can set a custom accent color using the sliders below." +
+    "You can set a custom accent color using the sliders below. " +
       "You can set a custom accent color for light mode, dark mode, and device mode." +
       " Device mode will use your device's dark mode toggle while light or dark will override your device's toggle.",
     3
