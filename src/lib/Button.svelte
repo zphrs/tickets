@@ -16,6 +16,7 @@
 </script>
 
 <button
+  tabindex="0"
   bind:this={button}
   class:active={!active}
   on:click
@@ -31,7 +32,7 @@
     font-weight: 500;
     background: transparent;
     cursor: pointer;
-    transition: all 0.2s ease-in-out;
+    transition: transform 0.2s ease-in-out;
     border: 2px solid var(--thick-glass-color);
     outline: none;
     color: rgba(var(--text), 0.7);

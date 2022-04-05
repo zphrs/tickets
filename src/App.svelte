@@ -9,12 +9,27 @@
   import { DLList } from "./lib/DLList"
   import { tick } from "svelte"
   import Settings from "./pages/Settings.svelte"
+  import defaultColors from "./defaultColors.json"
   let urlHash: string
   let tickets: MinHeap<TaskObject>
   let completed: DLList<TaskObject>
   $: {
     urlHash = new URL($url).hash
     window.location.hash = urlHash || "#/"
+  }
+  if (!localStorage.getItem("colors")) {
+    localStorage.setItem("colors", JSON.stringify(defaultColors))
+  }
+  const parsedColors = JSON.parse(localStorage.getItem("colors"))
+  const accent = parsedColors[parsedColors.selected].accent
+  document.documentElement.style.setProperty("--accent", accent)
+  $: switch (parsedColors.selected) {
+    case "light":
+      document.documentElement.classList.add("light")
+      break
+    case "dark":
+      document.documentElement.classList.add("dark")
+      break
   }
 
   $: {
@@ -77,7 +92,7 @@
     }
   }
   const metaThemeColor = document.querySelector("meta[name=theme-color]")
-  $: metaThemeColor.setAttribute("content", "rgb(111, 117, 255)")
+  metaThemeColor.setAttribute("content", "rgb(111, 117, 255)")
 
   function oncomplete() {
     tickets.poll()
@@ -221,11 +236,19 @@
       flex-direction: column;
       align-items: center;
       --text: 0, 0, 0;
-      --background: 200, 200, 210;
+      --background: 255, 255, 255;
       --accent: 58, 62, 187;
       @media (prefers-color-scheme: dark) {
         --text: 255, 255, 255;
         --background: 0, 0, 0;
+      }
+      &.dark {
+        --text: 255, 255, 255;
+        --background: 0, 0, 0;
+      }
+      &.light {
+        --text: 0, 0, 0;
+        --background: 255, 255, 255;
       }
       --text-color: rgb(var(--text));
       --background-color: rgb(var(--background));

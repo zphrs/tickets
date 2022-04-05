@@ -1,4 +1,39 @@
 <script lang="ts">
+  import Task from "../lib/Task/Task.svelte"
+  import TaskObject from "../lib/Task/Task"
+  import Button from "../lib/Button.svelte"
+  import defaultColors from "../defaultColors.json"
+
+  let task = new TaskObject(
+    "Yourself",
+    "You can set a custom accent color using the sliders below." +
+      "You can set a custom accent color for light mode, dark mode, and device mode." +
+      " Device mode will use your device's dark mode toggle while light or dark will override your device's toggle.",
+    3
+  )
+
+  let lightDark: string
+  let resetButtonMessage: string = ""
+  let localSettings = JSON.parse(localStorage.getItem("colors"))
+  $: lightDark = localSettings.selected
+
+  $: switch (localSettings.selected) {
+    case "light":
+      document.documentElement.classList.add("light")
+      document.documentElement.classList.remove("dark")
+      break
+    case "dark":
+      document.documentElement.classList.add("dark")
+      document.documentElement.classList.remove("light")
+      break
+    case "device":
+      document.documentElement.classList.remove("light")
+      document.documentElement.classList.remove("dark")
+      break
+  }
+
+  task.complete("boring completion message")
+
   document.title = "Tickets | Settings"
   function hslToRgb(hsl: number[]) {
     const h = hsl[0] / 360
@@ -54,19 +89,75 @@
     }
     return [Math.round(h), Math.round(s * 100), Math.round(l * 100)]
   }
-  let hsl = rgbToHsl(
-    document.documentElement.style
-      .getPropertyValue("--accent")
-      .split(",")
-      .map(x => {
-        console.log(Number.isNaN(parseInt(x)))
-        return Number.isNaN(parseInt(x)) ? undefined : parseInt(x)
-      })
-  )
-  console.log(hsl)
-  let h = Number.isNaN(hsl[0]) ? 238 : hsl[0]
-  let s = Number.isNaN(hsl[1]) ? 53 : hsl[1]
-  let l = Number.isNaN(hsl[2]) ? 48 : hsl[2]
+  let hsl: { h: number; s: number; l: number }
+  let h: number, s: number, l: number
+  hsl = localSettings[localSettings.selected]
+  h = hsl.h
+  s = hsl.s
+  l = hsl.l
+
+  function onThemeChange(e: Event) {
+    const target = e.target as HTMLSelectElement
+    h = localSettings[target.value].h
+    s = localSettings[target.value].s
+    l = localSettings[target.value].l
+    localSettings.selected = target.value
+    setResetButtonMessage(localSettings)
+  }
+
+  $: {
+    localSettings[localSettings.selected] = {
+      accent: hslToRgb([h, s, l]).join(","),
+      h: h,
+      s: s,
+      l: l,
+    }
+  }
+
+  function deepEqual(object1, object2) {
+    function isObject(object: any) {
+      return object != null && typeof object === "object"
+    }
+    const keys1 = Object.keys(object1)
+    const keys2 = Object.keys(object2)
+    if (keys1.length !== keys2.length) {
+      return false
+    }
+    for (const key of keys1) {
+      const val1 = object1[key]
+      const val2 = object2[key]
+      const areObjects = isObject(val1) && isObject(val2)
+      if (
+        (areObjects && !deepEqual(val1, val2)) ||
+        (!areObjects && val1 !== val2)
+      ) {
+        return false
+      }
+    }
+    return true
+  }
+
+  function setResetButtonMessage(localSettings) {
+    const tmp = deepEqual(
+      localSettings[localSettings.selected],
+      defaultColors[localSettings.selected]
+    )
+      ? `The ${localSettings.selected} mode accent color is the default.`
+      : ""
+    if (resetButtonMessage !== tmp) {
+      resetButtonMessage = tmp
+    }
+  }
+  setResetButtonMessage(localSettings)
+
+  let timeout = null
+  $: {
+    if (timeout) {
+      clearTimeout(timeout)
+    }
+    timeout = setTimeout(() => setResetButtonMessage(localSettings), 300)
+    localStorage.setItem("colors", JSON.stringify(localSettings))
+  }
 
   let hueTarget: HTMLElement
   let satTarget: HTMLElement
@@ -76,12 +167,21 @@
   // sets the thumb colors
   $: {
     if (hueTarget) {
-      hueTarget.style.setProperty("--thumb-color", `hsla(${h}, ${s}%, ${l}%)`)
-      satTarget.style.setProperty("--thumb-color", `hsla(${h}, ${s}%, ${l}%)`)
-      ligTarget.style.setProperty("--thumb-color", `hsla(${h}, ${s}%, ${l}%)`)
+      hueTarget.style.setProperty(
+        "--thumb-color",
+        `hsla(${h}deg, ${s}%, ${l}%)`
+      )
+      satTarget.style.setProperty(
+        "--thumb-color",
+        `hsla(${h}deg, ${s}%, ${l}%)`
+      )
+      ligTarget.style.setProperty(
+        "--thumb-color",
+        `hsla(${h}deg, ${s}%, ${l}%)`
+      )
       document.documentElement.style.setProperty(
         "--accent",
-        hslToRgb([h, s, l]).join(",")
+        localSettings[localSettings.selected].accent
       )
     }
     const metaThemeColor = document.querySelector("meta[name=theme-color]")
@@ -89,6 +189,16 @@
       "content",
       `rgb(${hslToRgb([h, s, l]).join(",")})`
     )
+  }
+
+  function resetColors() {
+    localSettings[localSettings.selected] = JSON.parse(
+      JSON.stringify(defaultColors)
+    )[localSettings.selected]
+    h = localSettings[localSettings.selected].h
+    s = localSettings[localSettings.selected].s
+    l = localSettings[localSettings.selected].l
+    setResetButtonMessage(localSettings)
   }
 
   // sets css variables
@@ -112,8 +222,9 @@
   }
 </script>
 
-<div bind:this={parent}>
+<div bind:this={parent} class="noborder">
   <div>
+    <Task {task} inCompletedList={true} />
     <input
       class="rainbow color-picker"
       start="0"
@@ -144,25 +255,37 @@
       name="lig"
       id="2"
     />
+    <select bind:value={lightDark} on:input={onThemeChange}>
+      <option value="device" default>Device</option>
+      <option value="light">Light</option>
+      <option value="dark">Dark</option>
+    </select>
+    <Button error={resetButtonMessage} on:click={resetColors}
+      >Reset {lightDark} mode accent color</Button
+    >
   </div>
   <!-- add a dark mode toggle switch -->
 </div>
 
 <style lang="scss">
   @mixin thumb {
-    background-color: rgba(var(--accent), 0.8);
+    background-color: var(--accent-color);
+    opacity: 0.8;
     border-radius: 50%;
     border: none;
     cursor: pointer;
-    width: 1rem;
-    height: 1rem;
+    width: 1.5rem;
+    height: 1.5rem;
     position: relative;
-    top: -0.4rem;
-    transition: all 0.3s ease-in-out;
+    top: -0.65rem;
+    transition: transform 0.3s linear, opacity 0.3s linear;
     &:hover {
+      opacity: 1;
       background-color: rgba(var(--accent), 1);
       transform: scale(1.1);
     }
+    backdrop-filter: blur(1.5em);
+    -webkit-backdrop-filter: blur(1.5em);
   }
 
   @mixin track {
@@ -208,9 +331,9 @@
 
   .color-picker[type="range"] {
     -webkit-appearance: none;
-    background: rgba(var(--background), 0.5);
+    background: transparent;
     border: none;
-    padding: 0.5rem;
+    padding: 1rem;
     margin: 0;
     display: flex;
     align-items: center;
@@ -294,10 +417,33 @@
   }
 
   :focus::-webkit-slider-thumb {
-    background-color: rgba(var(--accent), 1);
+    opacity: 1;
     transform: scale(1.2);
   }
   :focus:hover::-webkit-slider-thumb {
+    opacity: 1;
     transform: scale(1.3);
+  }
+
+  :focus::-moz-range-thumb {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+  :focus:hover::-moz-range-thumb {
+    opacity: 1;
+    transform: scale(1.3);
+  }
+
+  :focus::-ms-thumb {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+  :focus:hover::-ms-thumb {
+    opacity: 1;
+    transform: scale(1.3);
+  }
+
+  .noborder {
+    overflow: hidden;
   }
 </style>
