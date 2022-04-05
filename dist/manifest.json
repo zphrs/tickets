@@ -9,7 +9,7 @@
   "start_url": "/tickets/",
   "icons": [
     {
-      "src": "./svelte.png",
+      "src": "./ticket.png",
       "sizes": "512x512",
       "type": "image/png"
     }
