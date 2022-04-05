@@ -23,6 +23,8 @@
   const parsedColors = JSON.parse(localStorage.getItem("colors"))
   const accent = parsedColors[parsedColors.selected].accent
   document.documentElement.style.setProperty("--accent", accent)
+  const metaThemeColor = document.querySelector("meta[name=theme-color]")
+  metaThemeColor.setAttribute("content", `rgb(${accent})`)
   $: switch (parsedColors.selected) {
     case "light":
       document.documentElement.classList.add("light")
@@ -91,8 +93,6 @@
       }
     }
   }
-  const metaThemeColor = document.querySelector("meta[name=theme-color]")
-  metaThemeColor.setAttribute("content", "rgb(111, 117, 255)")
 
   function oncomplete() {
     tickets.poll()
