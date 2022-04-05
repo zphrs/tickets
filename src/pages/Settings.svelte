@@ -142,7 +142,7 @@
       localSettings[localSettings.selected],
       defaultColors[localSettings.selected]
     )
-      ? `The ${localSettings.selected} mode default accent color is active.`
+      ? `The default accent color for ${localSettings.selected} mode is set.`
       : ""
     if (resetButtonMessage !== tmp) {
       resetButtonMessage = tmp
