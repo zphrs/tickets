@@ -245,10 +245,12 @@
       &.dark {
         --text: 255, 255, 255;
         --background: 0, 0, 0;
+        color-scheme: dark;
       }
       &.light {
         --text: 0, 0, 0;
         --background: 255, 255, 255;
+        color-scheme: light;
       }
       --text-color: rgb(var(--text));
       --background-color: rgb(var(--background));
