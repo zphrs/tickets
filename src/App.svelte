@@ -238,9 +238,11 @@
       --text: 0, 0, 0;
       --background: 255, 255, 255;
       --accent: 58, 62, 187;
+      color-scheme: auto;
       @media (prefers-color-scheme: dark) {
         --text: 255, 255, 255;
         --background: 0, 0, 0;
+        color-scheme: dark;
       }
       &.dark {
         --text: 255, 255, 255;
