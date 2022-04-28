@@ -166,4 +166,37 @@
     transition-duration: 0.15s;
     transition-timing-function: ease-out;
   }
+
+  @media screen and (max-width: 600px) {
+    .choose-dash {
+      height: 3.5rem;
+      a {
+        border: none;
+        border-radius: 0;
+        &:first-child {
+          border-top-left-radius: 0;
+        }
+        &:last-child {
+          border-top-right-radius: 0;
+        }
+        border-top: 1px solid var(--thick-glass-color);
+      }
+    }
+    .choose-dash::after {
+      content: "";
+      display: block;
+      height: 2px;
+      background-color: var(--accent-color);
+      left: 0;
+      width: 100%;
+      top: 0;
+      transform-origin: 0;
+      transform: translateX(calc(var(--underline-start) * 100%))
+        scaleX(var(--underline-width));
+      position: absolute;
+      transition-property: transform, left;
+      transition-duration: 0.15s;
+      transition-timing-function: ease-out;
+    }
+  }
 </style>
