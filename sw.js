@@ -1,5 +1,5 @@
 CACHE_NAME = "tickets"
-CACHE_VERSION = "V7"
+CACHE_VERSION = "V8"
 
 self.addEventListener("install", function (event) {
   self.skipWaiting()
