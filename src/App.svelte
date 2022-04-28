@@ -149,6 +149,7 @@
       <h1>404 - try one of the links above</h1>
     {/if}
   </span>
+  <div class="padding">&nbsp;</div>
 </main>
 
 <style lang="scss">
@@ -168,6 +169,10 @@
       height: fit-content;
       display: block;
       border-radius: 0.5rem;
+    }
+    .padding {
+      background-color: transparent;
+      border: none;
     }
   }
 
@@ -220,6 +225,7 @@
         height: 100%;
         touch-action: pan-x pan-y;
         position: relative;
+        padding-bottom: 2rem;
       }
       html {
         padding: 0;
@@ -228,6 +234,14 @@
 
       nav {
         flex-shrink: 0;
+        bottom: 0;
+        top: unset;
+        position: fixed;
+        width: 100%;
+      }
+      .padding {
+        height: 2rem;
+        width: 100%;
       }
     }
 
