@@ -151,7 +151,6 @@
     box-sizing: unset;
     top: -0.25em;
     right: -0.25em;
-    border: 2px solid rgba(var(--accent), 0.7);
     font-size: 1.25rem;
     border-radius: 0.5rem;
     border-bottom-left-radius: 0;

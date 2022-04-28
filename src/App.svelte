@@ -186,7 +186,7 @@
       align-items: left;
       text-align: left;
       background-color: var(--glass-color);
-      border: 2px solid rgba(var(--accent), 0.5);
+      border: 0px solid rgba(var(--accent), 0.5);
       box-sizing: border-box;
       padding: 0.5rem;
       border-radius: 0.5rem;

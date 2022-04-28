@@ -180,6 +180,8 @@
           border-top-right-radius: 0;
         }
         border-top: 1px solid var(--thick-glass-color);
+        align-items: flex-start;
+        padding-top: 0.5rem;
       }
     }
     .choose-dash::after {

@@ -2,11 +2,13 @@
   import TaskObject from "./Task"
   import Button from "../Button.svelte"
   import { createEventDispatcher } from "svelte"
+  import { fly, scale } from "svelte/transition"
   let buttonActive = true
   let buttonError = ""
   let titleElement: HTMLInputElement
   let descriptionElement: HTMLTextAreaElement
   let priorityElement: HTMLSelectElement
+  let sub = true
   const dispatch = createEventDispatcher()
   function clearError() {
     buttonError = ""
@@ -44,6 +46,7 @@
       titleElement.value = ""
       descriptionElement.value = ""
       priorityElement.value = "-1"
+      sub = !sub
     }
   }
 
@@ -53,21 +56,27 @@
   }
 </script>
 
-<div>
-  <h1>For <input placeholder="client name" bind:this={titleElement} /></h1>
-  <p>
-    <textarea placeholder="task description" bind:this={descriptionElement} />
-  </p>
-  <select data-value="-1" on:change={setDataValue} bind:this={priorityElement}>
-    <option disabled value="-1" selected>select priority</option>
-    <option value="3">!</option>
-    <option value="2">!!</option>
-    <option value="1">!!!</option>
-  </select>
-  <Button on:click on:click={submit} active={buttonActive} error={buttonError}
-    >Submit</Button
-  >
-</div>
+{#key sub}
+  <div in:fly={{ y: -50, duration: 500 }}>
+    <h1>For <input placeholder="client name" bind:this={titleElement} /></h1>
+    <p>
+      <textarea placeholder="task description" bind:this={descriptionElement} />
+    </p>
+    <select
+      data-value="-1"
+      on:change={setDataValue}
+      bind:this={priorityElement}
+    >
+      <option disabled value="-1" selected>select priority</option>
+      <option value="3">!</option>
+      <option value="2">!!</option>
+      <option value="1">!!!</option>
+    </select>
+    <Button on:click on:click={submit} active={buttonActive} error={buttonError}
+      >Submit</Button
+    >
+  </div>
+{/key}
 
 <style>
   h1 {
